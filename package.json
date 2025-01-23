@@ -1,0 +1,24 @@
+{
+  "name": "PongGame",
+  "version": "1.0.0",
+  "description": "Online Pong game server",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ldefouw/PongGame.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/ldefouw/PongGame/issues"
+  },
+  "homepage": "https://github.com/ldefouw/PongGame#readme",
+  "dependencies": {
+    "ws": "^8.18.0"
+  },
+  "devDependencies": {}
+}
