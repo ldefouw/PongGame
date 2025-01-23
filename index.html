@@ -3,8 +3,28 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Pong Game</title>
-  <link rel="stylesheet" href="style.css">
+  <title>Retro Pong</title>
+  <style>
+    body {
+      margin: 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      background: #000; /* Black background for retro feel */
+      color: #fff;
+      font-family: 'Press Start 2P', sans-serif; /* Retro font */
+      overflow: hidden; /* Prevent scrollbars */
+    }
+
+    #pongCanvas {
+      background: #222; /* Dark gray background for the game */
+      border: 2px solid #fff; /* White border for CRT look */
+      box-shadow: 0 0 20px rgba(255, 255, 255, 0.5); /* Subtle glow effect */
+      display: block;
+    }
+  </style>
+  <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
 </head>
 <body>
   <canvas id="pongCanvas" width="800" height="400"></canvas>
