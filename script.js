@@ -1,6 +1,10 @@
 const canvas = document.getElementById("pongCanvas");
 const ctx = canvas.getContext("2d");
-const socket = new WebSocket("https://ponggame-1fry.onrender.com");
+
+// If your site is HTTPS, use wss://. 
+// Below is an example if you're on Render:
+// const socket = new WebSocket("wss://ponggame-1fry.onrender.com");
+const socket = new WebSocket("wss://ponggame-1fry.onrender.com");
 
 let playerId;
 let gameState;
@@ -35,9 +39,6 @@ document.addEventListener("mousemove", (e) => {
   socket.send(JSON.stringify({ type: 'movePaddle', playerId, y: paddle.y }));
 });
 
-// Ball speed multiplier
-let ballSpeedMultiplier = 1;
-
 // Draw the ball
 function drawBall(ball) {
   ctx.beginPath();
@@ -68,21 +69,39 @@ function drawMiddleLine() {
   ctx.setLineDash([]);
 }
 
-// Draw scores
-function drawScores() {
+/**
+ * Draw Scores + "$PONG" at the top center
+ */
+function drawScoresAndTitle() {
+  // Draw scores
   ctx.font = "20px 'Press Start 2P'";
   ctx.fillStyle = "#fff";
   ctx.fillText(`P1: ${gameState.scores.player1}`, 20, 30);
   ctx.fillText(`P2: ${gameState.scores.player2}`, canvas.width - 120, 30);
+
+  // Draw "$PONG" centered
+  const text = "$PONG";
+  const textWidth = ctx.measureText(text).width;
+  const x = (canvas.width - textWidth) / 2;
+  const y = 30;
+  ctx.fillText(text, x, y);
 }
 
-// Update ball speed after paddle collision
-function updateBallSpeed(ball) {
-  ball.vx *= ballSpeedMultiplier;
-  ball.vy *= ballSpeedMultiplier;
-
-  // Increase the speed multiplier for the next collision
-  ballSpeedMultiplier += 0.05; // Gradual speed increase
+// Show winner banner
+function drawWinnerBanner() {
+  const winner = gameState.winner; 
+  if (!winner) return; // No winner yet
+  
+  ctx.font = "40px 'Press Start 2P'";
+  ctx.fillStyle = "yellow";
+  
+  const text = (winner === 'player1') ? 'P1 WINS!' : 'P2 WINS!';
+  // Center the text
+  const textMetrics = ctx.measureText(text);
+  const x = (canvas.width - textMetrics.width) / 2;
+  const y = canvas.height / 2;
+  
+  ctx.fillText(text, x, y);
 }
 
 // Main draw function
@@ -95,17 +114,9 @@ function draw() {
   drawBall(gameState.ball);
   drawPaddle(gameState.paddles.player1);
   drawPaddle(gameState.paddles.player2);
-  drawScores();
-
-  // Check for paddle collision to increase speed
-  if (gameState.ball.collidedWithPaddle) {
-    updateBallSpeed(gameState.ball);
-  }
-
-  // Handle bottom and top wall collision
-  if (gameState.ball.y <= 0 || gameState.ball.y >= canvas.height) {
-    gameState.ball.vy = -gameState.ball.vy;
-  }
+  
+  drawScoresAndTitle();
+  drawWinnerBanner();
 }
 
 // Resize and center canvas
@@ -128,17 +139,15 @@ function resizeCanvas() {
     canvas.style.top = `${(window.innerHeight - canvas.height * scale) / 2}px`;
     canvas.style.left = `0px`;
   }
-
   canvas.style.position = "absolute";
 }
 
 window.addEventListener("resize", resizeCanvas);
 resizeCanvas();
 
-// Game loop
+// Game loop (client side rendering)
 function gameLoop() {
   draw();
   requestAnimationFrame(gameLoop);
 }
-
 gameLoop();
